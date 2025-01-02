@@ -2,15 +2,22 @@
 import os 
 import sys # as we will use customer exception
 from src.exception import CustomException
-from src.logger import logging
+#from src.logger import logging
+import logging # Changed by Arnob on 01-01-2025
 import pandas as pd 
 
 from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
 
 #Will uncomment later - Arnob - 01-01-2025
-#from src.components.data_transformation import DataTransformation
-#from src.components.data_transformation import DataTransformationConfig   
+from src.components.data_transformation_1 import DataTransformation1
+from src.components.data_transformation_1 import DataTransformationConfig   
+
+from src.components.data_transformation_2 import DataTransformation2  
+from src.components.data_transformation_2 import DataTransformationConfig2  
+
+from src.components.data_trans_3 import DataTransformation3  
+from src.components.data_trans_3 import DataTransformationConfig3 
 #dataclass is a decorator, if you are only defining variables then you can use data class, but if you have other 
 #function, need init
 
@@ -24,7 +31,7 @@ class DataIngestionConfig:
     #os.path dynamically adjust / or \ based on os
     #output => artifacts\train.csv
     test_data_path: str=os.path.join("artifacts","test.csv") #all data will be saved in artifacts path
-    raw_data_path: str=os.path.join("artifacts","data.csv") #all data will be saved in artifacts path
+    raw_data_path: str=os.path.join("artifacts","PS_1_TruckArrival_Class_Dataset_withActualColumns.csv") #all data will be saved in artifacts path
 
     #we can directly define the class variable without using init
 
@@ -40,7 +47,7 @@ class DataIngestion:
         logging.info("Entered the data ingestion method or component")
         try:
             #Step - 1 = Reading the dataset
-            df = pd.read_csv(r"artifacts\Mel01ExportData_new.csv") #Here we can read from anywhere
+            df = pd.read_csv(r"notebook\data\PS_1_TruckArrival_Class_Dataset_withActualColumns.csv") #Here we can read from anywhere
             logging.info('Read the dataset as dataframe')
 
             os.makedirs(os.path.dirname(self.ingestion_config.train_data_path),exist_ok = True) #Getting the directory name and not deleting
@@ -70,14 +77,42 @@ class DataIngestion:
 
 if __name__ == "__main__":
     obj=DataIngestion()
-    train_data,test_data = obj.initiate_data_ingestion()
+    train_data_path,test_data_path = obj.initiate_data_ingestion()
 
 
 #Will uncomment later - Arnob - 01-01-2025
-    #data_transformation = DataTransformation() #It will call this -> self.data_transformation_config
 
+################STEP 1################################################
+#Steps to Initiate data_transformation_1 -> passing the file paths for train and test 
+# and getting the 1st cut transformed file paths back
+    data_transformation1 = DataTransformation1() #It will call this -> self.data_transformation_config
+
+    #Initating data transformation phase 1
+    train_data_transformed_path,test_data_transformed_path= data_transformation1.initiate_firstlevel_data_transfor(train_data_path,test_data_path)
+
+    #Print for Arnob's validation - 
+    print(train_data_transformed_path)
+    print(test_data_transformed_path)
+
+######################################################################
+
+################STEP 2################################################
+#Steps to Initiate data_transformation_2 -> passing the transformed file paths for train and test 
+# and getting the final file paths back
+    data_transformation3 = DataTransformation3() #It will call this -> self.data_transformation_config
+
+    #Initating data transformation phase 1
+    train_arr,test_arr,train_data_final_path,test_data_final_path,_= data_transformation3.initiate_data_transformation2(train_data_transformed_path,test_data_transformed_path)
+
+    #Print for Arnob's validation
+    print(train_data_final_path)
+    print(test_data_final_path)
+
+    # Print the first row
+    print(train_arr[0])
+######################################################################
     #Adding new steps to integrate Model Trainer
     #train_arr,test_arr,_= data_transformation.initiate_data_transformation(train_data,test_data)
-
+    
     #modeltrainer = ModelTrainer()
     #print(modeltrainer.initiate_model_trainer(train_arr,test_arr)) #will return r2square
