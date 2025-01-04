@@ -339,10 +339,10 @@ class DataTransformation2:
             logging.info("Transformation of the datasets into final CSV files is completed.")
             return (
                 # Step 4: Returning the path of the final csv file paths for next step
-                self.data_transformation_config2.train_data_final_path,
-                self.data_transformation_config2.test_data_final_path,
                 train_arr,
                 test_arr,
+                self.data_transformation_config2.train_data_final_path,
+                self.data_transformation_config2.test_data_final_path,
                 self.data_transformation_config2.preprocessor_obj_file_path,
 
             )

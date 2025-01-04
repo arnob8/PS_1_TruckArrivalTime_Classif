@@ -98,6 +98,9 @@ class CompleteTransformer(BaseEstimator, TransformerMixin):
             time_of_day_encoded = pd.get_dummies(df['Planned_TimeOfDay'], prefix='Planned_TimeOfDay', drop_first=True).astype(int)  # Convert to integer type explicitly      
             # Step 3: Concatenate the original dataframe with the one-hot encoded columns
             df = pd.concat([df, time_of_day_encoded], axis=1)
+            columns_to_drop_1 = ["Planned_TimeOfDay"]
+            df = df.drop(columns=columns_to_drop_1)
+            
 
             # Frequency Encoding #Based on the No Of Trips
             freq_map_plannedhour = df['Planned_Hour'].value_counts(normalize=True).to_dict()
@@ -258,6 +261,40 @@ class CompleteTransformer(BaseEstimator, TransformerMixin):
             df = df.drop(columns=columns_to_drop)
             logging.info("3.14 - Dropped all ID based columns successfully.")
             print("Shape before Transformation - 3.14 - Dropping All ID Based column:",df.shape)
+################################################
+#3.15 - Selecting the final features that have been shortlisted manually
+            print("Shape before Feature Selection - 3.15 - :",df.shape)
+            # Calculate Order Density by Hour
+            selected_features = [
+                                "OrderType_freq",
+                                "CustomerID_freq",
+                                "Customer_Carrier_Interaction",
+                                "Carrier_Relation_Interaction",
+                                "CarrierID_freq",
+                                "Planned_Hour_cos",
+                                "Planned_Hour",
+                                "Planned_Month_sin",
+                                "Planned_Year",
+                                "Carrier_Relation_Order_Frequency",
+                                "Planned_Hour_freq",
+                                "Carrier_Relation_Customer_Interaction",
+                                "RelationID_freq",
+                                "Planned_Weekday",
+                                "Planned_Month",
+                                "Customer_Relation_Interaction",
+                                "Planned_TimeOfDay_Morning",
+                                "Planned_Weekday_cos",
+                                "Planned_Day_sin",
+                                "Planned_Week_freq",
+                                "Planned_Month_freq",
+                                "Planned_Week_cos",
+                                "TargetVariable"
+                            ]
+
+            # Select the specified columns
+            df = df[selected_features]                          
+            logging.info("3.15 - Features successfully.")
+            print("Shape before Feature Selection - 3.15 - :",df.shape)
             return df
         except Exception as e:
             raise CustomException(e, sys)
@@ -331,17 +368,18 @@ class DataTransformation3:
                 self.data_transformation_config3.test_data_final_path, index=False, header=True
             )
             #Step 4: New Addition by Arnob - Dropping the Target Variable from Train and Test Sets finally created
-            target_column_name = "TargetVariable"
-            input_feature_train_df = train_df_final.drop(columns = [target_column_name],axis = 1)
-            target_feature_train_df = train_df_final[target_column_name]
+            #Commenting it - 04-Jan-2025 - Arnob
+            #target_column_name = "TargetVariable"
+            #input_feature_train_df = train_df_final.drop(columns = [target_column_name],axis = 1)
+            #target_feature_train_df = train_df_final[target_column_name]
 
-            input_feature_test_df = test_df_final.drop(columns = [target_column_name],axis = 1)
-            target_feature_test_df = test_df_final[target_column_name]
+            #input_feature_test_df = test_df_final.drop(columns = [target_column_name],axis = 1)
+            #target_feature_test_df = test_df_final[target_column_name]
 
             #Step 5: Our dataframe is all messed up, so we will conver it into an array(easier for ML models to work)
             #And , we will put the Target variable column at the very last
-            train_arr = np.c_[input_feature_train_df, np.array(target_feature_train_df)]
-            test_arr = np.c_[input_feature_test_df, np.array(target_feature_test_df)]
+            #train_arr = np.c_[input_feature_train_df, np.array(target_feature_train_df)]
+            #test_arr = np.c_[input_feature_test_df, np.array(target_feature_test_df)]
 
             #Step 6: Saving the preprocessing object
 
@@ -354,8 +392,8 @@ class DataTransformation3:
             logging.info("Transformation of the datasets into final CSV files is completed.")
             return (
                 # Step 4: Returning the path of the final csv file paths for next step
-                train_arr,
-                test_arr,
+                train_df_final,
+                test_df_final,
                 self.data_transformation_config3.train_data_final_path,
                 self.data_transformation_config3.test_data_final_path,
                 self.data_transformation_config3.preprocessor_obj_file_path,

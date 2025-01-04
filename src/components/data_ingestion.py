@@ -22,8 +22,8 @@ from src.components.data_trans_3 import DataTransformationConfig3
 #function, need init
 
 #Will uncomment later - Arnob - 01-01-2025
-#from src.components.model_trainer import ModelTrainer
-#from src.components.model_trainer import ModelTrainerConfig
+from src.components.model_trainer import ModelTrainer
+from src.components.model_trainer import ModelTrainerConfig
 
 @dataclass
 class DataIngestionConfig:
@@ -102,17 +102,16 @@ if __name__ == "__main__":
     data_transformation3 = DataTransformation3() #It will call this -> self.data_transformation_config
 
     #Initating data transformation phase 1
-    train_arr,test_arr,train_data_final_path,test_data_final_path,_= data_transformation3.initiate_data_transformation2(train_data_transformed_path,test_data_transformed_path)
+    train_df_final,test_df_final,train_data_final_path,test_data_final_path,_= data_transformation3.initiate_data_transformation2(train_data_transformed_path,test_data_transformed_path)
 
     #Print for Arnob's validation
     print(train_data_final_path)
     print(test_data_final_path)
 
     # Print the first row
-    print(train_arr[0])
+    print(train_df_final.head(2))
 ######################################################################
-    #Adding new steps to integrate Model Trainer
-    #train_arr,test_arr,_= data_transformation.initiate_data_transformation(train_data,test_data)
+
     
-    #modeltrainer = ModelTrainer()
-    #print(modeltrainer.initiate_model_trainer(train_arr,test_arr)) #will return r2square
+    modeltrainer = ModelTrainer()
+    modeltrainer.initiate_model_trainer(train_df_final,test_df_final)
