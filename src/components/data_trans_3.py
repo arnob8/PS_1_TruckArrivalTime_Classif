@@ -9,13 +9,12 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder,StandardScaler
 from sklearn.preprocessing import LabelEncoder
 
+
 from src.exception import CustomException
 from src.logger import logging
 from src.utils import save_object # jsut used for saving the pickle fil
 import sys # provides access to system specific parameter and funcs, used to interact with Python runtime env
 from dataclasses import dataclass
-import numpy as np 
-import pandas as pd
 import os
 
 class CompleteTransformer(BaseEstimator, TransformerMixin):
@@ -28,11 +27,57 @@ class CompleteTransformer(BaseEstimator, TransformerMixin):
     def transform(self, df):
         # Create a copy to avoid modifying the original data
         df = df.copy()
-        # TimeDifference = ArrivedTime - PlannedTime in minutes
-        #3.4 - Deriving the Target Variable
-        ################################################
+        try:       
+################################################
+#3.0 - Transforming the date and time columns to form PlannedDateTime & ArrivedDateTime
+            print("Shape Before Transformation - 3.0 - Forming PlannedDateTime & ArrivedDateTime:",df.shape)
+            df["PlannedDateTime"] = pd.to_datetime(
+                df["Planned Date"] + " " + df["Planned Time"],
+                format="%d/%m/%Y %I:%M:%S %p",
+            )
+            df["ArrivedDateTime"] = pd.to_datetime(
+                df["Arrival Date"] + " " + df["Arrival Time"],
+                format="%d/%m/%Y %I:%M:%S %p",
+            )
+            print("Shape After Transformation - 3.0 - Forming PlannedDateTime & ArrivedDateTime:",df.shape)
+################################################
+#3.1 - Label Encoding CarrierID,RelationID,CustomerID            
+            # Initialize LabelEncoder
+            label_encoder = LabelEncoder()
+            print("Shape Before Transformation - 3.1 - Label Encoding CarrierID,RelationID,CustomerID:",df.shape)
+            # Transformation 2:Perform label encoding on Transport Company,RelationCode,Customer
+            logging.info("Encoding categorical columns with LabelEncoder.")
+            df["CarrierID"] = label_encoder.fit_transform(df["Transport Company"])
+            df["RelationID"] = label_encoder.fit_transform(df["RelationCode"])
+            df["CustomerID"] = label_encoder.fit_transform(df["Customer"])
+            print("Shape After Transformation - 3.1 - Label Encoding CarrierID,RelationID,CustomerID:",df.shape)
+################################################
+#3.2 - Adding derived column,NumberOfOrders against each TripId 
+            # Transformation 3:Add derived column,NumberOfOrders against each TripId
+            print("Shape Before Transformation - 3.2 - Adding derived column,NumberOfOrders against each TripId:",df.shape)
+            logging.info("Adding the 'NumberOfOrders' column.")
+            df["NumberOfOrders"] = 1
+            print("Shape After Transformation - 3.2 - Adding derived column,NumberOfOrders against each TripId:",df.shape)
+################################################
+#3.3 - Selecting only Required Columns
+            print("Shape Before Transformation - 3.3 - Selecting only Required Columns:",df.shape)
+            df = df[
+                [
+                    "Date",
+                    "CarrierID",
+                    "RelationID",
+                    "Trip Nr",
+                    "Order type",
+                    "CustomerID",
+                    "PlannedDateTime",
+                    "ArrivedDateTime",
+                    "NumberOfOrders",
+                ]
+            ]
+            print("Shape After Transformation - 3.3 - Selecting only Required Columns:",df.shape)
+################################################
 #3.4 - Deriving the Target Variable
-        try:
+        
             # TimeDifference = ArrivedTime - PlannedTime in minutes
             print("Shape Before Transformation - 3.4 - Derive Target Variable for Train:",df.shape)
             df['Delay'] = (df['ArrivedDateTime'] - df['PlannedDateTime']).dt.total_seconds() / 60  # in minutes
@@ -282,7 +327,7 @@ class CompleteTransformer(BaseEstimator, TransformerMixin):
                                 "Planned_Weekday",
                                 "Planned_Month",
                                 "Customer_Relation_Interaction",
-                                "Planned_TimeOfDay_Morning",
+                                #"Planned_TimeOfDay_Morning",
                                 "Planned_Weekday_cos",
                                 "Planned_Day_sin",
                                 "Planned_Week_freq",
@@ -333,31 +378,25 @@ class DataTransformation3:
         except Exception as e:
             raise CustomException(e, sys)
         
-    def initiate_data_transformation2(self,train_data_transformed_path,test_data_transformed_path) -> pd.DataFrame:
+    def initiate_data_transformation2(self,train_data_path,test_data_path) -> pd.DataFrame:
         '''
         This function initiates the data transformation using the pipeline
         '''
         try:
             logging.info(f"Reading path for CSV files for train and test")
             #Step-1: Loading the Train and Test data from the path provided
-            train_df_transformed = pd.read_csv(train_data_transformed_path)
-            test_df_transformed = pd.read_csv(test_data_transformed_path)
+            train_df = pd.read_csv(train_data_path)
+            test_df = pd.read_csv(test_data_path)
 
-            train_df_transformed["PlannedDateTime"] = pd.to_datetime(train_df_transformed["PlannedDateTime"], format="%Y-%m-%d %H:%M:%S")
-            train_df_transformed["ArrivedDateTime"] = pd.to_datetime(train_df_transformed["ArrivedDateTime"], format="%Y-%m-%d %H:%M:%S")
-            
-
-            test_df_transformed["PlannedDateTime"] = pd.to_datetime(test_df_transformed["PlannedDateTime"], format="%Y-%m-%d %H:%M:%S")
-            test_df_transformed["ArrivedDateTime"] = pd.to_datetime(test_df_transformed["ArrivedDateTime"], format="%Y-%m-%d %H:%M:%S")
             
             
             print("Information of DataFrame")
-            print(train_df_transformed.info())
+            print(train_df.info())
 
             #Step-2: getting an object ready
             preprocessing_obj = self.get_data_transformer_object()
-            train_df_final = preprocessing_obj.fit_transform(train_df_transformed)
-            test_df_final = preprocessing_obj.fit_transform(test_df_transformed)
+            train_df_final = preprocessing_obj.fit_transform(train_df)
+            test_df_final = preprocessing_obj.fit_transform(test_df)
             # Step 3: Save the transformed data to CSV files
             logging.info("Saving transformed train and test datasets.")
             train_df_final.to_csv(

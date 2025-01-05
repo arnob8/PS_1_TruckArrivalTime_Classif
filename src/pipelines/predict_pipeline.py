@@ -24,8 +24,15 @@ class PredictPipeline:
             data_scaled = preprocessor.transform(features)
             print("Exploring the model object")
             print(type(model))
-            preds = model.predict(data_scaled)
-            return preds
+            print("Final DataFrame for Prediction")
+            print(data_scaled.head(2))
+            print("Dropping the Target Variable")
+            columns_to_drop = ["TargetVariable"]
+            data_final_to_pred = data_scaled.drop(columns=columns_to_drop)
+            print(data_final_to_pred.head(2))
+            preds = model.predict(data_final_to_pred)
+            pred_proba = model.predict_proba(data_final_to_pred)
+            return preds,pred_proba
 
         except Exception as e:
             raise CustomException(e,sys)
@@ -35,19 +42,19 @@ class PredictPipeline:
 #Second Class -> Responsible for matching all the input we are passing in the html to the backend
 class CustomData:
     def __init__( self,           
-            date: date,
-            transport_company: str,
-            relation_name: str,
-            relation_code: str,
-            trip_nr: str,
-            order_number: str,
-            external_reference: str,
-            order_type: str,
-            customer: str,
-            planned_date: date,
-            planned_time: time,
-            arrival_date: date,
-            arrival_time: time):
+            date,
+            transport_company,
+            relation_name,
+            relation_code,
+            trip_nr,
+            order_number,
+            external_reference,
+            order_type,
+            customer,
+            planned_date,
+            planned_time,
+            arrival_date,
+            arrival_time):
 
             #Creating variable using self, the values are coming from web app agianst the respective variable
             self.date = date
@@ -70,21 +77,24 @@ class CustomData:
     def get_data_as_data_frame(self):
         try:
             custom_data_input_dict = {
-                "date": [self.date],
-                "transport_company": [self.transport_company],
-                "relation_name":[self.relation_name],
-                "relation_code":[self.relation_code],
-                "trip_nr":[self.trip_nr],
-                "order_number":[self.order_number],
-                "external_reference":[self.external_reference],
-                "order_type":[self.order_type],
-                "customer":[self.customer],
-                "planned_date":[self.planned_date],
-                "planned_time":[self.planned_time],
-                "arrival_date":[self.arrival_date],
-                "arrival_time":[self.arrival_time],
+                "Date": [self.date],
+                "Transport Company": [self.transport_company],
+                "RelationName":[self.relation_name],
+                "RelationCode":[self.relation_code],
+                "Trip Nr":[self.trip_nr],
+                "Order Number":[self.order_number],
+                "External reference":[self.external_reference],
+                "Order type":[self.order_type],
+                "Customer":[self.customer],
+                "Planned Date":[self.planned_date],
+                "Planned Time":[self.planned_time],
+                "Arrival Date":[self.arrival_date],
+                "Arrival Time":[self.arrival_time],
                 }
-            return pd.DataFrame(custom_data_input_dict)
+            final_df = pd.DataFrame(custom_data_input_dict)
+            print("In predict_pipeline",final_df)
+            print("In predict_pipeline",final_df.info())
+            return final_df
 
         except Exception as e:
             raise CustomException(e,sys)

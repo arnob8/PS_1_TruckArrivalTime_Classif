@@ -4,7 +4,7 @@ import pandas as pd
 
 from sklearn.preprocessing import StandardScaler
 from src.pipelines.predict_pipeline import CustomData,PredictPipeline
-
+from datetime import datetime
 
 application=Flask(__name__) # This basically gives the entry point where we need to execute
 
@@ -27,9 +27,31 @@ def predict_datapoint():
     if request.method=='GET':
         return render_template('home.html')# Input data fields will be present
     else:
+        # Parse the date in the format "%d/%m/%Y"
+        date_str = request.form.get('date')
+        date_obj = datetime.strptime(date_str, '%d/%m/%Y').date()
+        formatted_date = date_obj.strftime('%d/%m/%Y')
+        print("Printing DateObj",date_obj)
+        # Parse planned_date and arrival_date in the same format if needed
+        planned_date_str = request.form.get('planned_date')
+        planned_date_obj = datetime.strptime(planned_date_str, '%d/%m/%Y').date()
+        formatted_planned_date= planned_date_obj.strftime('%d/%m/%Y')
+
+        arrival_date_str = request.form.get('arrival_date')
+        arrival_date_obj = datetime.strptime(arrival_date_str, '%d/%m/%Y').date()
+        formatted_arrival_date= arrival_date_obj.strftime('%d/%m/%Y')
+
+        # Parse the time (Planned Time and Arrival Time)
+        planned_time_str = request.form.get('planned_time')
+        planned_time_obj = datetime.strptime(planned_time_str, '%I:%M %p').strftime('%I:%M:%S %p')  # Convert to required format with seconds
+        
+
+        arrival_time_str = request.form.get('arrival_time')
+        arrival_time_obj = datetime.strptime(arrival_time_str, '%I:%M %p').strftime('%I:%M:%S %p')  # Convert to required format with seconds
+
         #for POST - Own custom class, this will be created in predict pipeline too
         data=CustomData(
-            date=request.form.get('date'),
+            date=formatted_date,
             transport_company=request.form.get('transport_company'),
             relation_name=request.form.get('relation_name'),
             relation_code=request.form.get('relation_code'),
@@ -38,10 +60,10 @@ def predict_datapoint():
             external_reference=request.form.get('external_reference'),
             order_type=request.form.get('order_type'),
             customer=request.form.get('customer'),
-            planned_date=request.form.get('planned_date'),
-            planned_time=request.form.get('planned_time'),
-            arrival_date=request.form.get('arrival_date'),
-            arrival_time=request.form.get('arrival_time')
+            planned_date=formatted_planned_date,
+            planned_time=planned_time_obj,
+            arrival_date=formatted_arrival_date,
+            arrival_time=arrival_time_obj
 
         )
         pred_df=data.get_data_as_data_frame()
@@ -50,9 +72,11 @@ def predict_datapoint():
 
         predict_pipeline=PredictPipeline()
         print("Mid Prediction")
-        results=predict_pipeline.predict(pred_df)
+        results,proba=predict_pipeline.predict(pred_df)
         print("after Prediction")
-        return render_template('home.html',results=results[0])#Output will be in the list format
+        print("Results",results[0])
+        print("Results",proba)
+        return render_template('home.html',results=results[0],proba=proba)#Output will be in the list format
     
 
 if __name__=="__main__":

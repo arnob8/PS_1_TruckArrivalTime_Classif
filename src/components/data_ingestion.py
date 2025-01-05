@@ -85,14 +85,14 @@ if __name__ == "__main__":
 ################STEP 1################################################
 #Steps to Initiate data_transformation_1 -> passing the file paths for train and test 
 # and getting the 1st cut transformed file paths back
-    data_transformation1 = DataTransformation1() #It will call this -> self.data_transformation_config
+    #data_transformation1 = DataTransformation1() #It will call this -> self.data_transformation_config
 
     #Initating data transformation phase 1
-    train_data_transformed_path,test_data_transformed_path= data_transformation1.initiate_firstlevel_data_transfor(train_data_path,test_data_path)
+    #train_data_transformed_path,test_data_transformed_path= data_transformation1.initiate_firstlevel_data_transfor(train_data_path,test_data_path)
 
     #Print for Arnob's validation - 
-    print(train_data_transformed_path)
-    print(test_data_transformed_path)
+    #print(train_data_transformed_path)
+    #print(test_data_transformed_path)
 
 ######################################################################
 
@@ -101,10 +101,12 @@ if __name__ == "__main__":
 # and getting the final file paths back
     data_transformation3 = DataTransformation3() #It will call this -> self.data_transformation_config
 
+    print("#1- Starting Journery from data_ingestion.py")
     #Initating data transformation phase 1
-    train_df_final,test_df_final,train_data_final_path,test_data_final_path,_= data_transformation3.initiate_data_transformation2(train_data_transformed_path,test_data_transformed_path)
+    train_df_final,test_df_final,train_data_final_path,test_data_final_path,_= data_transformation3.initiate_data_transformation2(train_data_path,test_data_path)
 
     #Print for Arnob's validation
+    print("#2- Printing the FInal Paths after receiving it")
     print(train_data_final_path)
     print(test_data_final_path)
 

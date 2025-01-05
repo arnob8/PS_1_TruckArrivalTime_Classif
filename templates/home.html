@@ -73,7 +73,7 @@
         <form action="{{ url_for('predict_datapoint') }}" method="post">
             <div class="mb-3">
                 <label class="form-label">Date</label>
-                <input class="form-control" type="date" name="date" required>
+                <input class="form-control" type="text" name="date" required>
             </div>
 
             <div class="mb-3">
@@ -118,22 +118,22 @@
 
             <div class="mb-3">
                 <label class="form-label">Planned Date</label>
-                <input class="form-control" type="date" name="planned_date" required>
+                <input class="form-control" type="text" name="planned_date" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Planned Time</label>
-                <input class="form-control" type="time" name="planned_time" required>
+                <input class="form-control" type="text" name="planned_time" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Arrival Date</label>
-                <input class="form-control" type="date" name="arrival_date" required>
+                <input class="form-control" type="text" name="arrival_date" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Arrival Time</label>
-                <input class="form-control" type="time" name="arrival_time" required>
+                <input class="form-control" type="text" name="arrival_time" required>
             </div>
 
             <div class="mb-3">
@@ -143,6 +143,9 @@
 
         <h2>
             THE prediction is {{ results }}
+        </h2>
+        <h2>
+            THE probability is {{ proba }}
         </h2>
     </div>
 </body>
