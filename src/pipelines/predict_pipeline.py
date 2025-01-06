@@ -13,8 +13,9 @@ class PredictPipeline:
     # two pckle files we have currently, preprocessor and  model
     def predict(self,features):
         try:
-            model_path = 'artifacts\model.pkl'
-            preprocessor_path = 'artifacts\preprocessor.pkl'
+            print("Inside predict_pipeline.py")
+            model_path = 'artifacts/model.pkl'
+            preprocessor_path = 'artifacts/preprocessor.pkl'
             #load_obect we will craete, will load the pickle file
             model = load_object(file_path = model_path) #should be created in utils
             preprocessor = load_object(file_path = preprocessor_path)
