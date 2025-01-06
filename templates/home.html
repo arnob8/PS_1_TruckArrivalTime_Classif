@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=0.7"> <!-- Further zoom out -->
     <title>Trip Data Form</title>
     <style>
         body {
@@ -10,28 +10,38 @@
             margin: 0;
             padding: 0;
             background-color: #f9f9f9;
+            font-size: 10px; /* Smaller font size */
+            overflow: hidden; /* Hide scrollbars */
         }
 
-        .form-container {
-            width: 60%;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        .container {
+            width: 90%;
+            margin: 0 auto;
+            padding: 10px;
+            box-sizing: border-box;
         }
 
         h1 {
             text-align: center;
-            color: #007bff; /* Light blue for the heading */
+            color: #007bff;
+            font-size: 14px; /* Smaller font size */
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #555;
+            font-size: 10px; /* Smaller font size */
+            margin-top: 10px;
         }
 
         form {
-            margin-top: 20px;
+            margin-top: 10px;
+            display: block;
         }
 
         .form-label {
-            font-size: 16px;
+            font-size: 10px; /* Smaller font size */
             margin-bottom: 5px;
             display: block;
             color: #333;
@@ -39,101 +49,100 @@
 
         .form-control {
             width: 100%;
-            padding: 8px;
-            margin-bottom: 15px;
+            padding: 5px;
+            margin-bottom: 8px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            font-size: 9px; /* Smaller font size */
         }
 
         .btn-primary {
-            background-color: #007bff; /* Light blue for the button */
+            background-color: #007bff;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 6px 12px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 10px;
         }
 
         .btn-primary:hover {
             background-color: #0056b3;
         }
 
-        h2 {
-            text-align: center;
-            color: #555;
+        .results {
+            display: block;
             margin-top: 20px;
+            text-align: center;
+            font-size: 20px;
         }
+
+        .result-text {
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
     </style>
 </head>
 <body>
-    <div class="form-container">
+    <div class="container">
         <h1>Trip Data Submission</h1>
 
+        <!-- Form -->
         <form action="{{ url_for('predict_datapoint') }}" method="post">
             <div class="mb-3">
                 <label class="form-label">Date</label>
-                <input class="form-control" type="text" name="date" required>
+                <input class="form-control" type="text" name="date" value="{{ date }}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Transport Company</label>
-                <input class="form-control" type="text" name="transport_company" placeholder="Enter Transport Company" required>
+                <input class="form-control" type="text" name="transport_company" placeholder="Enter Transport Company" value="{{ transport_company }}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Relation Name</label>
-                <input class="form-control" type="text" name="relation_name" placeholder="Enter Relation Name" required>
+                <input class="form-control" type="text" name="relation_name" placeholder="Enter Relation Name" value="{{ relation_name }}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Relation Code</label>
-                <input class="form-control" type="text" name="relation_code" placeholder="Enter Relation Code" required>
+                <input class="form-control" type="text" name="relation_code" placeholder="Enter Relation Code" value="{{ relation_code }}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Trip Nr</label>
-                <input class="form-control" type="text" name="trip_nr" placeholder="Enter Trip Number" required>
+                <input class="form-control" type="text" name="trip_nr" placeholder="Enter Trip Number" value="{{ trip_nr }}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Order Number</label>
-                <input class="form-control" type="text" name="order_number" placeholder="Enter Order Number" required>
+                <input class="form-control" type="text" name="order_number" placeholder="Enter Order Number" value="{{ order_number }}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">External Reference</label>
-                <input class="form-control" type="text" name="external_reference" placeholder="Enter External Reference" required>
+                <input class="form-control" type="text" name="external_reference" placeholder="Enter External Reference" value="{{ external_reference }}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Order Type</label>
-                <input class="form-control" type="text" name="order_type" placeholder="Enter Order Type" required>
+                <input class="form-control" type="text" name="order_type" placeholder="Enter Order Type" value="{{ order_type }}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Customer</label>
-                <input class="form-control" type="text" name="customer" placeholder="Enter Customer" required>
+                <input class="form-control" type="text" name="customer" placeholder="Enter Customer" value="{{ customer }}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Planned Date</label>
-                <input class="form-control" type="text" name="planned_date" required>
+                <input class="form-control" type="text" name="planned_date" value="{{ planned_date }}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Planned Time</label>
-                <input class="form-control" type="text" name="planned_time" required>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Arrival Date</label>
-                <input class="form-control" type="text" name="arrival_date" required>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Arrival Time</label>
-                <input class="form-control" type="text" name="arrival_time" required>
+                <input class="form-control" type="text" name="planned_time" value="{{ planned_time }}" required>
             </div>
 
             <div class="mb-3">
@@ -141,12 +150,17 @@
             </div>
         </form>
 
-        <h2>
-            THE prediction is {{ results }}
-        </h2>
-        <h2>
-            THE probability is {{ proba }}
-        </h2>
+        <!-- Display Results -->
+        <div class="results">
+            {% if results is not none %}
+                <div class="result-text">
+                    <h2>Predicted Output of the Truck Being Delayed Is (1=Delayed; 0=OnTime): {{ results }}</h2>
+                </div>
+                <div class="result-text">
+                    <h2>Probability of Prediction for Delay is: {{ proba }}</h2>
+                </div>
+            {% endif %}
+        </div>
     </div>
 </body>
 </html>

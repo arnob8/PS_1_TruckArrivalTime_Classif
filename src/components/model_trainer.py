@@ -117,7 +117,7 @@ class ModelTrainer:
                 file_path = self.model_trainer_config.trained_model_file_path,
                 obj = best_rf_model_on_recall
             )
-            return model_scores
+            return model_scores,model_scores_test
         except Exception as e:
             raise CustomException(e, sys)
 

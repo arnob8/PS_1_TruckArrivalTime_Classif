@@ -13,26 +13,26 @@ class PredictPipeline:
     # two pckle files we have currently, preprocessor and  model
     def predict(self,features):
         try:
-            print("Inside predict_pipeline.py")
+            print("########Step-4- Extension - Inside predict_pipeline.py")
             model_path = 'artifacts/model.pkl'
             preprocessor_path = 'artifacts/preprocessor.pkl'
+            print("########Step-4- Data Transformation Triggered through preprocessor.pkl")
             #load_obect we will craete, will load the pickle file
             model = load_object(file_path = model_path) #should be created in utils
             preprocessor = load_object(file_path = preprocessor_path)
             #print("Exploring the preprocessor object")
             #print(type(preprocessor))
             #print(preprocessor.transformers)
-            data_scaled = preprocessor.transform(features)
-            print("Exploring the model object")
+            data_final_to_pred = preprocessor.transform(features)
+            print("########Step-4 - End of Data Transformation#########################")
+            print("########Step-5 - Printing the Model Object")
             print(type(model))
-            print("Final DataFrame for Prediction")
-            print(data_scaled.head(2))
-            print("Dropping the Target Variable")
-            columns_to_drop = ["TargetVariable"]
-            data_final_to_pred = data_scaled.drop(columns=columns_to_drop)
+            print("########Step-6 - Printing Final DataFrame for Prediction")
             print(data_final_to_pred.head(2))
-            preds = model.predict(data_final_to_pred)
-            pred_proba = model.predict_proba(data_final_to_pred)
+            print("########Step-7 - Printing DataFrame Info")
+            print(data_final_to_pred.info())
+            preds = model.predict(data_final_to_pred) #is typically a 1D array containing labels or predicted values.
+            pred_proba = model.predict_proba(data_final_to_pred) #s a 2D array containing probabilities, with rows corresponding to samples and columns to class probabilities
             return preds,pred_proba
 
         except Exception as e:
@@ -53,9 +53,10 @@ class CustomData:
             order_type,
             customer,
             planned_date,
-            planned_time,
-            arrival_date,
-            arrival_time):
+            planned_time
+            #arrival_date,
+            #arrival_time
+            ):
 
             #Creating variable using self, the values are coming from web app agianst the respective variable
             self.date = date
@@ -69,8 +70,8 @@ class CustomData:
             self.customer = customer
             self.planned_date = planned_date
             self.planned_time = planned_time
-            self.arrival_date = arrival_date
-            self.arrival_time = arrival_time
+            #self.arrival_date = arrival_date
+            #self.arrival_time = arrival_time
 
     #It will basically return all our input in the form of a dataframe
     #From my web appplication , will get mapped to a datafram
@@ -88,13 +89,14 @@ class CustomData:
                 "Order type":[self.order_type],
                 "Customer":[self.customer],
                 "Planned Date":[self.planned_date],
-                "Planned Time":[self.planned_time],
-                "Arrival Date":[self.arrival_date],
-                "Arrival Time":[self.arrival_time],
+                "Planned Time":[self.planned_time]
+                #"Arrival Date":[self.arrival_date],
+                #"Arrival Time":[self.arrival_time],
                 }
             final_df = pd.DataFrame(custom_data_input_dict)
-            print("In predict_pipeline",final_df)
-            print("In predict_pipeline",final_df.info())
+            #print("In predict_pipeline",final_df)
+            print("#Step 1: Extension - In predict_pipeline - Please find dataframe info")
+            print(final_df.info())
             return final_df
 
         except Exception as e:

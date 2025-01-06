@@ -13,9 +13,10 @@ import sys # provides access to system specific parameter and funcs, used to int
 from dataclasses import dataclass
 import os
 
-print("version in data_trans_3")
-print("numpy",np.__version__)
-print("pandas",pd.__version__)
+#print("version in data_trans_3")
+#print("numpy",np.__version__)
+#print("pandas",pd.__version__)
+print("########Step-4-Inside Data Transformation")
 
 
 class CompleteTransformer(BaseEstimator, TransformerMixin):
@@ -366,6 +367,7 @@ class DataTransformation3:
             target_variable_pipeline = Pipeline([
                 ("complete_transformation_including_target_variable", CompleteTransformer())
             ])
+            
 
             return target_variable_pipeline
         except Exception as e:
