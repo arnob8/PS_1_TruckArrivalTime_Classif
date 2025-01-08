@@ -16,7 +16,7 @@ import os
 #print("version in data_trans_3")
 #print("numpy",np.__version__)
 #print("pandas",pd.__version__)
-print("########Step-4-Inside Data Transformation")
+#print("########Step-4-Inside Data Transformation")
 
 
 class CompleteTransformer(BaseEstimator, TransformerMixin):

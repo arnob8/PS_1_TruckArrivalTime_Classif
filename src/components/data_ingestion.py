@@ -10,11 +10,7 @@ from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
 
 #Will uncomment later - Arnob - 01-01-2025
-from src.components.data_transformation_1 import DataTransformation1
-from src.components.data_transformation_1 import DataTransformationConfig   
 
-from src.components.data_transformation_2 import DataTransformation2  
-from src.components.data_transformation_2 import DataTransformationConfig2  
 
 from src.components.data_trans_3 import DataTransformation3  
 from src.components.data_trans_3 import DataTransformationConfig3 
@@ -75,45 +71,38 @@ class DataIngestion:
         except Exception as e:
             raise CustomException(e,sys)
 
+#Data-Ingestion 1: THis is the starting point as it has the main method, it then calls 
+#initiate_data_ingestion() - To divide into train and test
 if __name__ == "__main__":
+    print("########1- Starting Journery from data_ingestion.py")
     obj=DataIngestion()
     train_data_path,test_data_path = obj.initiate_data_ingestion()
+    print("Splitting the Data into Test and Train, and sending it for Data Transformation")
 
+#Data-Ingestion 2: THis creates an object of the DataTransformation Class present in data_trans_3
+#and passes the train_data_path and test_data_path
 
-#Will uncomment later - Arnob - 01-01-2025
-
-################STEP 1################################################
-#Steps to Initiate data_transformation_1 -> passing the file paths for train and test 
-# and getting the 1st cut transformed file paths back
-    #data_transformation1 = DataTransformation1() #It will call this -> self.data_transformation_config
-
-    #Initating data transformation phase 1
-    #train_data_transformed_path,test_data_transformed_path= data_transformation1.initiate_firstlevel_data_transfor(train_data_path,test_data_path)
-
-    #Print for Arnob's validation - 
-    #print(train_data_transformed_path)
-    #print(test_data_transformed_path)
-
-######################################################################
-
-################STEP 2################################################
-#Steps to Initiate data_transformation_2 -> passing the transformed file paths for train and test 
-# and getting the final file paths back
+#Data Transformation => Returns back the Train and Test files after transformation
     data_transformation3 = DataTransformation3() #It will call this -> self.data_transformation_config
-
-    print("#1- Starting Journery from data_ingestion.py")
+    print("########2- Starting with Data Transformation")
+    
     #Initating data transformation phase 1
     train_df_final,test_df_final,train_data_final_path,test_data_final_path,_= data_transformation3.initiate_data_transformation2(train_data_path,test_data_path)
 
-    #Print for Arnob's validation
-    print("#2- Printing the FInal Paths after receiving it")
-    print(train_data_final_path)
-    print(test_data_final_path)
-
-    # Print the first row
-    print(train_df_final.head(2))
 ######################################################################
 
-    
+   #Data-Ingestion 3: Finally object of the ModelTrainer() class is created
+   #and passes the train_df_final and train_df_final , these are the final dataframes which has the
+   #i/p features with Transformed columns
+   #initiate_model_trainer() -> this function creates the model and stores it 
+   #Final Scores are returned which we can print
     modeltrainer = ModelTrainer()
-    modeltrainer.initiate_model_trainer(train_df_final,test_df_final)
+    print("########3- Sending the final dataframes for model building after transformation")
+    print("Sample of train_dataframe")
+    print(train_df_final.head(2))
+
+    print("########4- Printing the scores in CV fold and Holdout Set")
+    model_scores,model_scores_test = modeltrainer.initiate_model_trainer(train_df_final,test_df_final)
+
+
+ 
