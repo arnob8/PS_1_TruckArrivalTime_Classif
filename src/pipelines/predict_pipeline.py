@@ -11,6 +11,7 @@ class PredictPipeline:
 
     #will simply do prediction
     # two pckle files we have currently, preprocessor and  model
+    #Prediction - 1: Gives prediction of 1 input
     def predict(self,features):
         try:
             print("########Step-4- Extension - Inside predict_pipeline.py")
@@ -38,7 +39,7 @@ class PredictPipeline:
         except Exception as e:
             raise CustomException(e,sys)
         
-
+           
 
 #Second Class -> Responsible for matching all the input we are passing in the html to the backend
 class CustomData:

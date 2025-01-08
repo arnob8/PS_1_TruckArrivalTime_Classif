@@ -2,6 +2,7 @@
 #Newly added by Arnob
 Scripts/
 artifacts/PS_1_TruckArrival_Class_Dataset_withActualColumns.csv
+notebook/data/PS_1_TruckArrival_Class_Dataset_withActualColumns.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
